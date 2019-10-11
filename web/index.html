@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
    <script src="js/jquery-3.4.1.min.js"></script>
+   <script src="js/Chart.min.js"></script>
+   <script src="js/dygraph.min.js"></script>
    <script src="js/custom.js"></script>
+   <script src="js/customcharts.js"></script>
    <script src="js/prototypes.js"></script>
    <link rel="stylesheet" type="text/css" href="style.css">
    <title>Document</title>
-<style>
+   <style>
 
-</style>
-
+   </style>
 </head>
+
 <body>
    <div id="content">
       <div id="left_pane">
@@ -23,15 +27,28 @@
 
          </div>
       </div>
-      <div id=middle_pane>
-         bbbb
+      <div id="middle_pane">
+         <div id="event_graph">
+            GRAPH
+         </div>
+         <div id="event_filter">
+            event filter
+         </div>
+         <div id="event_list">
+
+         </div>
       </div>
       <div id="right_pane">
-         ccc
+         <div id="event_details">
+            Details
+         </div>
+         <canvas id="testgraph"></canvas>
       </div>
    </div>
 </body>
 <script>
-$( document ).ready(main());
+   $(document).ready(main());
+
 </script>
+
 </html>

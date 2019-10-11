@@ -1,4 +1,9 @@
+html {
+   height: 100%;
+}
+
 body {
+   position: relative;
    width: 100%;
    height: 100%;
    margin: 0;
@@ -11,22 +16,30 @@ div, p {
 }
 
 #content {
+   position: relative;
    background-color: pink;
-   display: flex;
-   flex-direction: row;
-   justify-content: space-between;
+   display: grid;
+   /* flex-direction: row; */
+   /* justify-content: space-between; */
+   grid-template-columns: 25% auto 25%;
    width: 100%;
-   height: 50em;
+   min-height: 100% !important;
+   height: 100%;
    transition: .5s ease-in-out;
 }
 
-/* #content>div {
+/* #content #left_pane:hover {
    transition: .5s ease-in-out;
 } */
 
 #left_pane {
-   flex-grow: 1;
+   /* flex-grow: 1; */
    background-color: yellow;
+}
+
+.ro_canvas_container {
+   width: 6em;
+   padding-bottom: .2em;
 }
 
 /* 
@@ -35,13 +48,28 @@ div, p {
 } */
 
 #middle_pane {
-   flex-grow: 2;
-   flex-basis: 50%;
+   height: 100%;
+   position: relative;
+   /* flex-grow: 2; */
+   /* flex-basis: 50%; */
    color:blue;
 }
 
+#event_list {
+   height: 80%;
+   overflow-y: auto;
+   position: relative;
+}
+
+.event {
+   display: grid;
+   grid-template-columns: auto auto auto;
+   grid-template-rows: auto auto;
+   margin-bottom: .3em;
+}
+
 #right_pane{
-   flex-grow: 1;
+   /* flex-grow: 1; */
    background-color: green;
 }
 
