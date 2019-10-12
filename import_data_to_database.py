@@ -9,8 +9,18 @@ import re
 
 try:
     arguments = cgi.FieldStorage()
-    filepaths = arguments["path"].value
-    robot_names = arguments["name"].value
+    fullpath = arguments["path"].value
+    if os.path.splitext(fullpath)[1] == '.csv':
+                filepaths.append(fullpath)
+                temp = os.path.basename(fullpath)
+                temp = temp.replace("EventLog", "")
+                temp = temp.replace(".csv", "")
+                temp = temp.strip()
+                temp = temp.replace("-", "_")
+                temp = temp.replace(" ", "_")
+                temp = temp.replace(".", "_")
+                robot_names.append(temp)
+
 except:
     filepaths = []
     robot_names = []

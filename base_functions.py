@@ -45,6 +45,9 @@ class Stripped_Event:
         self.reason = reason
         self.domain = domain
         self.header = header
+        self.errors = 0
+        self.warnings = 0
+        self.infos = 0
         self.severity = severity
         self.user_severity = user_severity
         

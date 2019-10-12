@@ -38,10 +38,10 @@ con = connect_to_database()
 
 
 # # debug
-# what_to_send = "robots"
+# what_to_send = "event_details"
 # robot_name = "120_100962"
 # event_id = 40000
-# start_time = "2019-10-08  10:16:11"
+# start_time = "2019-10-06  10:16:11"
 # end_time = dt.strftime(dt.now(), '%Y-%m-%d %H:%M:%S')
 
 def compute_times(events):
@@ -53,6 +53,9 @@ def compute_times(events):
     prev_stop_event = events[-1]
     stop_start_time = []
     stop_start_id = []
+    errors = 0
+    warnings = 0
+    infos = 0
     for i in range(len(events)-1, -1, -1):
         if stop_state == -1:
             if events[i][2] in stop_events:
@@ -73,10 +76,19 @@ def compute_times(events):
             if events[i][2] in stop_events:   
                 prev_stop_event = events[i]
                 stop_state = 1
+        try:
+            if events[i][6] == "Error":
+                errors += 1
+            elif events[i][6] == "Warning":
+                warnings += 1
+            elif events[i][6] == "Info":
+                infos += 1
+        except:
+            pass
 
     up_time = (events[0][1].timestamp() - events[-1][1].timestamp()) - stop_time
 
-    return [stop_time, up_time, stop_start_time, stop_start_id]
+    return [stop_time, up_time, stop_start_time, stop_start_id, errors, warnings, infos]
 
 def analyze_event(event, events):
     occurences = 0
@@ -107,20 +119,26 @@ if what_to_send == "robots":
         events = get_clamped_table_data(con, robot[1], start_time, end_time)
         if len(events) == 0:
             continue
-        [stop_time, up_time, stop_start_time, stop_start_id] = compute_times(events)
-        temp = Stripped_Robot()
+        [stop_time, up_time, stop_start_time, stop_start_id, errors, warnings, infos] = compute_times(events)
+        temp = Stripped_Robot() 
         temp.robot_id = robot[0]
         temp.name = robot[1]
         temp.uptime = up_time
         temp.downtime = stop_time
+        if not (up_time + stop_time == 0):
+            temp.percentage = up_time/(up_time + stop_time)
+        else: 
+            temp.percentage = 2            
         elements.append(temp)
+
+    elements.sort(key=lambda x: x.percentage, reverse=False)
 
 if what_to_send == "events":
     events = get_clamped_table_data(con, robot_name, start_time, end_time, join = 1)  
     robotData = get_robot_data(con, robot_name) 
     [stop_events, start_events] = get_start_stop_events(con)
 
-    [stop_time, up_time, stop_start_time, stop_start_id] = compute_times(events)
+    [stop_time, up_time, stop_start_time, stop_start_id, errors, warnings, infos] = compute_times(events)
 
     robot = Robot()
 
@@ -142,12 +160,17 @@ if what_to_send == "events":
         temp.time = dt.strftime(event[1], '%Y-%m-%d %H:%M:%S')
         robot.events.append(temp)
     
+    robot.events.reverse()
+
     robot.name = robot_name
     robot.robot_id = robotData[0][0]
     robot.stop_start_time = stop_start_time
     robot.stop_start_id = stop_start_id
     robot.downtime = stop_time
     robot.uptime = up_time
+    robot.errors = errors
+    robot.warnings = warnings 
+    robot.infos = infos
 
     elements.append(robot)
 
@@ -157,7 +180,7 @@ if what_to_send == "event_details":
     
     details = get_event_data(con, robot_name, event_id)
     detail = details[0]
-    [occurences, last_occurence, next_occurance] = analyze_event(detail, events)
+    [occurences, last_occurence, next_occurence] = analyze_event(detail, events)
 
     temp = Event()
     temp.event_id = detail[0]
@@ -167,7 +190,7 @@ if what_to_send == "event_details":
     temp.header = detail[7]
     temp.severity = detail[6]
     temp.last_occurence = last_occurence
-    temp.next_occurance = next_occurance
+    temp.next_occurence = next_occurence
     temp.occurences = occurences
     temp.cause = detail[8]
     temp.action = detail[9]
@@ -187,5 +210,4 @@ if len(elements) > 0:
 else:
     print(jsons.dumps("No data available."))
 
-pass
 
