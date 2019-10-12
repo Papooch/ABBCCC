@@ -7,9 +7,11 @@
    <script src="js/jquery-3.4.1.min.js"></script>
    <script src="js/Chart.min.js"></script>
    <script src="js/dygraph.min.js"></script>
-   <script src="js/custom.js"></script>
-   <script src="js/customcharts.js"></script>
+   <script src="js/moment.js"></script>
+   <script src="js/filter.js"></script>
    <script src="js/prototypes.js"></script>
+   <script src="js/customcharts.js"></script>
+   <script src="js/custom.js"></script>
    <link rel="stylesheet" type="text/css" href="style.css">
    <title>Document</title>
    <style>
@@ -20,8 +22,29 @@
 <body>
    <div id="content">
       <div id="left_pane">
-         <div id="source_select">
-            Robot list
+         <div id="left_header">
+            <div id="source_select">
+               <div>
+                  Load data
+               </div>
+               <button id="bu-load_last_week" onclick=load_week()>
+                  Last week
+               </button>
+               <button id="bu-load_last_month" onclick=load_month()>
+                  Last month
+               </button>
+               <div class="date_form">
+                  <span>Date from:</span>
+                  <input type="datetime-local" id="date_start" name="start">
+               </div>
+               <div class="date_form">
+                  <span>Date to:</span>
+                  <input type="datetime-local" id="date_end">
+               </div>
+               <button id="bu-load_data" onclick=load_data()>
+                  Load data
+               </button>
+            </div>
          </div>
          <div id="robot_list">
 
@@ -34,7 +57,19 @@
                <div id="event_graph"></div>
             </div>
             <div id="event_filter">
-               event filter
+               <div id="sev_filter">
+                  <button id="bu-info" title="Info" data-f_id="0" onclick=filter($(this))>Info</button>
+                  <button id="bu-warning" title="Warning" data-f_id="1" onclick=filter($(this))>Warning</button>
+                  <button id="bu-error" title="Error" data-f_id="2" onclick=filter($(this))>Error</button>
+               </div>
+               <div id="dom_filter">
+                  <button id="bu-operational" title="operational" onclick=filterd($(this))>Operational</button>
+                  <button id="bu-connected" title="connected" onclick=filterd($(this))>Connected Serv.</button>
+                  <button id="bu-program" title="program" onclick=filterd($(this))>Program</button>
+                  <button id="bu-motion" title="motion" onclick=filterd($(this))>Motion</button>
+                  <button id="bu-system" title="system" onclick=filterd($(this))>System</button>
+                  <button id="bu-unknown" title="unknown" onclick=filterd($(this))>Other</button>
+               </div>
             </div>
          </div>
          <div id="event_list">
@@ -43,9 +78,7 @@
       </div>
       <div id="right_pane">
          <div id="event_details">
-            Details
          </div>
-         <canvas id="testgraph"></canvas>
       </div>
    </div>
 </body>
